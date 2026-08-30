@@ -70,13 +70,20 @@ export interface Memo {
 }
 
 export interface WebhookModel {
-	id?: number | string;
-	creatorId?: number;
-	createTime?: string;
-	updateTime?: string;
-	rowStatus?: RowStatus;
 	name?: string;
 	url?: string;
+	displayName?: string;
+	createTime?: string;
+	updateTime?: string;
+	signingSecret?: string;
+	signingSecretSet?: boolean;
+	id?: number | string;
+	creatorId?: number;
+	rowStatus?: RowStatus;
+}
+
+export interface ListUserWebhooksResponse {
+	webhooks?: WebhookModel[];
 }
 
 export interface WebhookPayload {

@@ -8,6 +8,7 @@ import {
 	JsonObject,
 	NodeApiError,
 } from 'n8n-workflow';
+import { UserModel } from './Interfaces';
 
 type MemosCredentials = {
 	server: string;
@@ -81,4 +82,23 @@ export async function apiRequestAllItems(
 	} while (responseData.nextPageToken);
 
 	return returnData;
+}
+
+export async function getCurrentUser(
+	this: IAllExecuteFunctions | IExecuteFunctions | IHookFunctions,
+): Promise<UserModel> {
+	return (await apiRequest.call(this, 'GET', 'auth/me')) as unknown as UserModel;
+}
+
+export function getUserResourceName(user: UserModel): string {
+	if (user.name) {
+		return user.name.startsWith('users/') ? user.name : `users/${user.name}`;
+	}
+	if (user.id !== undefined) {
+		return `users/${user.id}`;
+	}
+	if (user.username) {
+		return `users/${user.username}`;
+	}
+	throw new Error('Could not determine user identifier from current user response');
 }

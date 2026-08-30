@@ -68,7 +68,7 @@ Interact with resources in your Memos instance. Also supports AI Tool calling (`
 
 ### 2. Memos Trigger Node (`Memos Trigger`)
 
-A webhook trigger node that automatically subscribes to and receives event notifications from a Memos instance via webhook callbacks (`/api/v1/webhooks`).
+A webhook trigger node that automatically subscribes to and receives event notifications from a Memos instance via user webhook callbacks (`/api/v1/users/{user}/webhooks`).
 
 - Automatically creates and manages webhooks when workflow is activated.
 - Captures real-time event payloads sent from Memos to trigger workflows instantly.

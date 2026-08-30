@@ -14,7 +14,7 @@ The official useMemos API documentation is available at:
 Connecting to a Memos instance requires Bearer Token authentication via the `memosApi` credential (`credentials/MemosApi.credentials.ts`):
 - **Server URL (`server`)**: The base URL of the Memos instance (e.g. `https://memos.example.com`). All API requests target the `/api/v1` prefix.
 - **Access Token (`accessToken`)**: Personal access token generated in Memos user settings.
-- **Auth Endpoint**: `POST /api/v1/auth/status` (or `GET /api/v1/auth/status`).
+- **Auth Endpoint**: `GET /api/v1/auth/me`).
 
 ## Nodes in Package
 
@@ -34,7 +34,7 @@ A general action node to interact with resources in Memos.
   - `Get Current User`: Fetch the authenticated user's profile and session status.
 
 ### 2. Memos Trigger Node (`nodes/Memos/MemosTrigger.node.ts`)
-A webhook trigger node that automatically subscribes to and receives event notifications from a Memos instance via webhook callbacks (`/api/v1/webhooks`).
+A webhook trigger node that automatically subscribes to and receives event notifications from a Memos instance via webhook callbacks (`/api/v1/users/{user}/webhooks`).
 
 ## Project Structure
 ```text

@@ -11,8 +11,8 @@ import {
 	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
-import { apiRequest } from './GenericFunctions';
-import { WebhookModel } from './Interfaces';
+import { apiRequest, getCurrentUser, getUserResourceName } from './GenericFunctions';
+import { ListUserWebhooksResponse, WebhookModel } from './Interfaces';
 
 export class MemosTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -54,16 +54,29 @@ export class MemosTrigger implements INodeType {
 					return false;
 				}
 
-				let endpoint = `webhooks/${webhookData.webhookId}`;
-				if (String(webhookData.webhookId).startsWith('webhooks/')) {
-					endpoint = String(webhookData.webhookId);
-				}
-
 				try {
-					const webhook = (await apiRequest.call(this, 'GET', endpoint)) as unknown as WebhookModel;
-					if (webhook && webhook.url === webhookUrl) {
+					const currentUser = await getCurrentUser.call(this);
+					const userResource = getUserResourceName(currentUser);
+					const response = (await apiRequest.call(
+						this,
+						'GET',
+						`${userResource}/webhooks`,
+					)) as unknown as ListUserWebhooksResponse;
+
+					const webhooks = response.webhooks || [];
+					const existingWebhook = webhooks.find(
+						(w) =>
+							(w.name === webhookData.webhookId ||
+								w.id === webhookData.webhookId ||
+								String(w.name).endsWith(`/${webhookData.webhookId}`)) &&
+							w.url === webhookUrl,
+					);
+
+					if (existingWebhook) {
+						webhookData.webhookId = existingWebhook.name || existingWebhook.id;
 						return true;
 					}
+
 					delete webhookData.webhookId;
 					return false;
 				} catch {
@@ -81,15 +94,17 @@ export class MemosTrigger implements INodeType {
 					);
 				}
 
-				const endpoint = 'webhooks';
+				const currentUser = await getCurrentUser.call(this);
+				const userResource = getUserResourceName(currentUser);
+				const endpoint = `${userResource}/webhooks`;
 				const body = {
-					name: 'Memos Trigger',
+					displayName: 'n8n Webhook',
 					url: webhookUrl,
 				};
 				const webhookData = this.getWorkflowStaticData('node');
 				try {
 					const responseData = (await apiRequest.call(this, 'POST', endpoint, body)) as unknown as WebhookModel;
-					webhookData.webhookId = responseData.id || responseData.name;
+					webhookData.webhookId = responseData.name || responseData.id;
 					return true;
 				} catch (error) {
 					throw new NodeApiError(this.getNode(), error as JsonObject);
@@ -101,9 +116,15 @@ export class MemosTrigger implements INodeType {
 					return true;
 				}
 
-				let endpoint = `webhooks/${webhookData.webhookId}`;
-				if (String(webhookData.webhookId).startsWith('webhooks/')) {
-					endpoint = String(webhookData.webhookId);
+				let endpoint = String(webhookData.webhookId);
+				if (!endpoint.includes('/')) {
+					try {
+						const currentUser = await getCurrentUser.call(this);
+						const userResource = getUserResourceName(currentUser);
+						endpoint = `${userResource}/webhooks/${webhookData.webhookId}`;
+					} catch {
+						endpoint = `webhooks/${webhookData.webhookId}`;
+					}
 				}
 
 				try {
