@@ -93,7 +93,7 @@ To use these nodes, you need to configure the **Memos API** (`memosApi`) credent
 2. Configure the following fields:
    - **Server URL**: The base URL of your Memos instance (e.g., `https://memos.example.com`).
    - **Access Token**: The personal access token generated in Memos.
-3. Save the credential. n8n will test authentication via `POST /api/v1/auth/status`.
+3. Save the credential. n8n will test authentication via `GET /api/v1/auth/me`.
 
 ---
 
