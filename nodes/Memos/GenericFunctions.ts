@@ -91,14 +91,11 @@ export async function getCurrentUser(
 }
 
 export function getUserResourceName(user: UserModel): string {
-	if (user.name) {
-		return user.name.startsWith('users/') ? user.name : `users/${user.name}`;
+	if (user.user.name) {
+		return user.user.name.startsWith('users/') ? user.user.name : `users/${user.user.name}`;
 	}
-	if (user.id !== undefined) {
-		return `users/${user.id}`;
-	}
-	if (user.username) {
-		return `users/${user.username}`;
+	if (user.user.username) {
+		return `users/${user.user.username}`;
 	}
 	throw new Error('Could not determine user identifier from current user response');
 }

@@ -26,20 +26,22 @@ export interface ResourceModel {
 }
 
 export interface UserModel {
-	name: string;
-	id?: number;
-	role?: UserRole;
-	username?: string;
-	email?: string;
-	nickname?: string;
-	displayName?: string;
-	avatarUrl?: string;
-	description?: string;
-	password?: string;
-	rowStatus?: RowStatus;
-	state?: MemoState;
-	createTime?: string;
-	updateTime?: string;
+	user: {
+		name: string;
+		id?: number;
+		role?: UserRole;
+		username?: string;
+		email?: string;
+		nickname?: string;
+		displayName?: string;
+		avatarUrl?: string;
+		description?: string;
+		password?: string;
+		rowStatus?: RowStatus;
+		state?: MemoState;
+		createTime?: string;
+		updateTime?: string;
+	}
 }
 
 export interface Memo {
