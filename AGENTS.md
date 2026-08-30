@@ -1,7 +1,7 @@
-# n8n-nodes-memos
+# n8n-nodes-usememos
 
 ## Overview
-This repository contains the `n8n-nodes-memos` community node package for [n8n](https://n8n.io), providing integrations with [useMemos](https://usememos.com) — an open-source, privacy-first, lightweight note-taking service.
+This repository contains the `n8n-nodes-usememos` community node package for [n8n](https://n8n.io), providing integrations with [useMemos](https://usememos.com) — an open-source, privacy-first, lightweight note-taking service.
 
 The node connects to self-hosted or cloud-hosted useMemos instances using the official REST API v1.
 

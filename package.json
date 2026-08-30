@@ -1,5 +1,5 @@
 {
-    "name": "n8n-nodes-memos",
+    "name": "n8n-nodes-usememos",
     "version": "0.1.0",
     "description": "n8n community node to connect to useMemos",
     "license": "MIT",
@@ -13,7 +13,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/paulspenke/n8n-nodes-memos.git"
+        "url": "https://github.com/paulspenke/n8n-nodes-usememos.git"
     },
    "scripts": {
 		"build": "n8n-node build",
