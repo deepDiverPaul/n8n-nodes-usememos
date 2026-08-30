@@ -1,6 +1,6 @@
 {
     "name": "n8n-nodes-usememos",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "n8n community node to connect to useMemos",
     "license": "MIT",
     "homepage": "https://usememos.com",
