@@ -43,8 +43,8 @@ export class MemosApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{$credentials.server}}/api/v1',
-			url: '/auth/status',
-			method: 'POST',
+			url: '/auth/me',
+			method: 'GET',
 		},
 	};
 }
