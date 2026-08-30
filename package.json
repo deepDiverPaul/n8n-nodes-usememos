@@ -1,9 +1,9 @@
 {
     "name": "n8n-nodes-memos",
     "version": "0.1.0",
-    "description": "",
+    "description": "n8n community node to connect to useMemos",
     "license": "MIT",
-    "homepage": "",
+    "homepage": "https://usememos.com",
     "keywords": [
         "n8n-community-node-package"
     ],
@@ -13,7 +13,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+        "url": "https://github.com/paulspenke/n8n-nodes-memos.git"
     },
    "scripts": {
 		"build": "n8n-node build",
@@ -30,9 +30,12 @@
     "n8n": {
         "n8nNodesApiVersion": 1,
         "strict": true,
-        "credentials": [],
+        "credentials": [
+            "dist/credentials/MemosApi.credentials.js"
+        ],
         "nodes": [
-            "dist/nodes/Example/Example.node.js"
+            "dist/nodes/Memos/Memos.node.js",
+            "dist/nodes/Memos/MemosTrigger.node.js"
         ]
     },
     "devDependencies": {

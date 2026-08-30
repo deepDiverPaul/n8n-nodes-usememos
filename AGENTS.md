@@ -1,102 +1,67 @@
-# n8n community node
+# n8n-nodes-memos
 
 ## Overview
-This is a project containing code for an n8n community node. n8n is a workflow
-automation platform where users build workflows with nodes, which are the
-building block of a workflow. Nodes can perform a range of actions, such as
-starting a workflow (called a "trigger node"), fetching and sending data, or
-processing and manipulating it. Besides that there are credentials - entities
-that store sensitive information on how to connect to external services and
-APIs. A node can require some credentials to be used. Community nodes are a way
-for anyone to create such nodes and add them to be used in n8n. All community
-nodes are named in a format: `n8n-nodes-<n>` or `@org/n8n-nodes-<n>`.
-Community nodes can also be submitted for approval to be used on n8n Cloud
-version. In that case there are rules that the node needs to follow in order to
-be approved
+This repository contains the `n8n-nodes-memos` community node package for [n8n](https://n8n.io), providing integrations with [useMemos](https://usememos.com) — an open-source, privacy-first, lightweight note-taking service.
 
-## Important notes
-- Follow the **rules and guidelines in this document and the linked docs
-  below** over any code examples.
-- All code blocks in these docs are **illustrative and incomplete**.
-  They **MUST NOT** be copied verbatim or assumed to be the final desired code.
-- Replace example names like `Example`, `Wordpress`, `wordpressApi`, etc.
-  with names that match the **actual service / node** you are building.
-- When in doubt, **generalize from the patterns**, don't replicate the exact
-  structure, fields, or values from the examples.
-- Produce the **full implementation** needed for the current project
-  (nodes, credentials, tests, etc.), not just fragments similar to examples.
-- If an example omits parts (e.g. types, operations, properties), **infer and
-  implement the missing parts** based on the real requirements / API docs.
-- Never output `Wordpress`-specific code unless the project is actually about
-  WordPress.
+The node connects to self-hosted or cloud-hosted useMemos instances using the official REST API v1.
 
-## Project structure
-There are two main folders in this project:
-- `nodes` contains all of the nodes in a package (there can be more than 1).
-  The code for each node usually lives in its own folder
-- `credentials` contains all of the credentials in a package. Usually it's just
-  a single file for every credential
-So it looks something like this:
+## API Documentation
+The official useMemos API documentation is available at:
+- **API Reference (Latest)**: https://usememos.com/docs/api/latest
+- **Access Tokens Guide**: https://usememos.com/docs/security/access-tokens
+
+## Authentication & Credentials
+Connecting to a Memos instance requires Bearer Token authentication via the `memosApi` credential (`credentials/MemosApi.credentials.ts`):
+- **Server URL (`server`)**: The base URL of the Memos instance (e.g. `https://memos.example.com`). All API requests target the `/api/v1` prefix.
+- **Access Token (`accessToken`)**: Personal access token generated in Memos user settings.
+- **Auth Endpoint**: `POST /api/v1/auth/status` (or `GET /api/v1/auth/status`).
+
+## Nodes in Package
+
+### 1. Memos Node (`nodes/Memos/Memos.node.ts`)
+A general action node to interact with resources in Memos.
+
+#### Supported Resources & Operations:
+- **Memo (`memo`)**:
+  - `Create`: Create a new memo in Markdown format with optional visibility (`PRIVATE`, `PROTECTED`, `PUBLIC`), state (`NORMAL`, `ARCHIVED`), and pinned flag.
+  - `Get`: Retrieve a specific memo by ID/name (e.g. `123` or `memos/123`).
+  - `Get Many`: List memos with pagination (`returnAll` / `limit`), state filtering, CEL filter expressions (e.g. `creator == "users/1"`), and custom ordering (`orderBy`).
+  - `Update`: Update content, visibility, state, and pinned status of an existing memo using `updateMask`.
+  - `Delete`: Delete an existing memo by ID/name.
+- **User (`user`)**:
+  - `Get`: Retrieve user details by user ID or username.
+  - `Get Many`: List users with pagination (`returnAll` / `limit`).
+  - `Get Current User`: Fetch the authenticated user's profile and session status.
+
+### 2. Memos Trigger Node (`nodes/Memos/MemosTrigger.node.ts`)
+A webhook trigger node that automatically subscribes to and receives event notifications from a Memos instance via webhook callbacks (`/api/v1/webhooks`).
+
+## Project Structure
+```text
 .
-├── nodes/
-│   └── Example/
-│       ├── Example.node.ts
-│       └── ...
 ├── credentials/
-│   └── Example.credentials.ts
-├── package.json
-└── ...
-It's important to note that `package.json` has a special field `n8n` that have
-information about nodes and credentials in a package:
-```json
-{
-  "name": "n8n-nodes-example",
-  "version": "1.0.0",
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "strict": true,
-    "credentials": [
-        "dist/credentials/Example.credentials.js"
-    ],
-    "nodes": [
-      "dist/nodes/Example/Example.node.js"
-    ]
-  }
-}
+│   ├── MemosApi.credentials.ts   # Credential type definition for Memos API
+│   └── memos.png                 # Credential icon
+├── nodes/
+│   └── Memos/
+│       ├── GenericFunctions.ts   # API request helpers, auth, and pagination
+│       ├── Interfaces.ts         # TypeScript models and API response types
+│       ├── Memos.node.ts         # Main Memos node implementation
+│       ├── MemosTrigger.node.ts  # Memos Webhook trigger node implementation
+│       └── memos.png             # Node icon
+├── package.json                  # Package manifest and n8n registration
+└── tsconfig.json                 # TypeScript build configuration
 ```
-`nodes` and `credentials` keys contain paths to transpiled JS files in a `dist`
-folder for the nodes and credentials respectively. If you add/remove/rename
-nodes and/or credentials, you need to make sure to update `n8n.nodes` and
-`n8n.credentials` keys in `package.json` accordingly. Initial files in the
-project _may_ contain example nodes and/or credentials that need to be
-**removed or renamed** once you start making an actual node.
 
-## Key guidelines
-- Use the `n8n-node` CLI tool **whenever possible** for building, dev mode,
-  linting, etc.
-- **Always** address any lint/typecheck errors/warnings, unless there is a
-  **very specific reason** to ignore/disable it
-- Make sure to use **proper types whenever possible**
-- If you are updating the npm package version, make sure to **update
-  CHANGELOG.md** in the root of the repository
-- Read `.agents/workflow.md` for more info
+## Development & Build Commands
+- **Build**: `npm run build` (transpiles TypeScript to `dist/` and copies static assets)
+- **Lint**: `npm run lint` (runs ESLint and community node rules)
+- **Lint Fix**: `npm run lint:fix`
+- **Development Watch**: `npm run dev`
 
-## Context-specific docs
-Load these before working on the relevant area:
-
-| Working on...                        | Read first                                                          |
-|--------------------------------------|---------------------------------------------------------------------|
-| Any node file in `nodes`            | `.agents/nodes.md` and `.agents/properties.md`                      |
-| A declarative-style node             | above + `.agents/nodes-declarative.md`                              |
-| A programmatic-style node            | above + `.agents/nodes-programmatic.md`                             |
-| Files in `credentials/`              | `.agents/credentials.md`                                            |
-| Adding a new version to a node       | `.agents/versioning.md`                                             |
-| Starting a new task or planning      | `.agents/workflow.md`                                               |
-
-## Additional resources
-If you need any extra information, here are links to n8n's official docs
-regarding building community nodes:
-- https://docs.n8n.io/integrations/community-nodes/build-community-nodes/
-- https://docs.n8n.io/integrations/creating-nodes/overview/
-- https://docs.n8n.io/integrations/creating-nodes/build/reference/
-- https://docs.n8n.io/integrations/creating-nodes/build/reference/ux-guidelines/
+## Standards & Best Practices
+- **Package Registration**: All nodes and credentials must be correctly registered in `package.json` under the `n8n` object (`n8n.nodes` and `n8n.credentials`).
+- **Connection Types**: Nodes use `NodeConnectionTypes.Main` from `n8n-workflow` for inputs and outputs.
+- **Error Handling**: API errors and validation issues are cleanly wrapped in `NodeApiError` and `NodeOperationError`.
+- **Typing**: Strict TypeScript types without `any`.
+- **AI Tool Compatibility**: `usableAsTool: true` is configured where appropriate.

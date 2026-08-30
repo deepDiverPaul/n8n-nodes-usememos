@@ -6,6 +6,9 @@ import {
 	INodeTypeDescription,
 	IWebhookFunctions,
 	IWebhookResponseData,
+	JsonObject,
+	NodeApiError,
+	NodeConnectionTypes,
 	NodeOperationError,
 } from 'n8n-workflow';
 import { apiRequest } from './GenericFunctions';
@@ -18,12 +21,13 @@ export class MemosTrigger implements INodeType {
 		icon: 'file:memos.png',
 		group: ['trigger'],
 		version: 1,
+		subtitle: 'Webhook',
 		description: 'Handle Memos events via webhooks',
 		defaults: {
 			name: 'Memos Trigger',
 		},
 		inputs: [],
-		outputs: ['main'],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'memosApi',
@@ -40,6 +44,7 @@ export class MemosTrigger implements INodeType {
 		],
 		properties: [],
 	};
+
 	webhookMethods = {
 		default: {
 			async checkExists(this: IHookFunctions): Promise<boolean> {
@@ -49,21 +54,22 @@ export class MemosTrigger implements INodeType {
 					return false;
 				}
 
-				const endpoint = `/webhooks/${webhookData.webhookId}`;
-				try {
-					const webhook = (await apiRequest.call(this, 'GET', endpoint)) as WebhookModel;
-					if (webhook.url !== webhookUrl) {
-						delete webhookData.webhookId;
-						return false;
-					}
-				} catch (error) {
-					if (error.cause.httpCode === '404') {
-						delete webhookData.webhookId;
-						return false;
-					}
-					throw error;
+				let endpoint = `webhooks/${webhookData.webhookId}`;
+				if (String(webhookData.webhookId).startsWith('webhooks/')) {
+					endpoint = String(webhookData.webhookId);
 				}
-				return true;
+
+				try {
+					const webhook = (await apiRequest.call(this, 'GET', endpoint)) as unknown as WebhookModel;
+					if (webhook && webhook.url === webhookUrl) {
+						return true;
+					}
+					delete webhookData.webhookId;
+					return false;
+				} catch {
+					delete webhookData.webhookId;
+					return false;
+				}
 			},
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default') as string;
@@ -71,25 +77,23 @@ export class MemosTrigger implements INodeType {
 				if (webhookUrl.includes('//localhost')) {
 					throw new NodeOperationError(
 						this.getNode(),
-						'The Webhook can not work on "localhost". Please, either setup n8n on a custom domain or start with "--tunnel"!',
+						'The Webhook cannot work on "localhost". Please configure n8n on a reachable domain or use tunnel mode (--tunnel)!',
 					);
 				}
 
-				const endpoint = '/webhooks';
+				const endpoint = 'webhooks';
 				const body = {
 					name: 'Memos Trigger',
 					url: webhookUrl,
 				};
 				const webhookData = this.getWorkflowStaticData('node');
-				let responseData: WebhookModel;
 				try {
-					responseData = await apiRequest.call(this, 'POST', endpoint, body);
+					const responseData = (await apiRequest.call(this, 'POST', endpoint, body)) as unknown as WebhookModel;
+					webhookData.webhookId = responseData.id || responseData.name;
+					return true;
 				} catch (error) {
-					throw new NodeOperationError(this.getNode(), error);
+					throw new NodeApiError(this.getNode(), error as JsonObject);
 				}
-
-				webhookData.webhookId = responseData.id;
-				return true;
 			},
 			async delete(this: IHookFunctions): Promise<boolean> {
 				const webhookData = this.getWorkflowStaticData('node');
@@ -97,26 +101,27 @@ export class MemosTrigger implements INodeType {
 					return true;
 				}
 
-				const endpoint = `/webhooks/${webhookData.webhookId}`;
+				let endpoint = `webhooks/${webhookData.webhookId}`;
+				if (String(webhookData.webhookId).startsWith('webhooks/')) {
+					endpoint = String(webhookData.webhookId);
+				}
+
 				try {
 					await apiRequest.call(this, 'DELETE', endpoint);
 				} catch (error) {
-					throw new NodeOperationError(this.getNode(), error);
+					throw new NodeApiError(this.getNode(), error as JsonObject);
 				}
 				delete webhookData.webhookId;
 				return true;
 			},
 		},
 	};
-	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
-		const bodyData = this.getBodyData() as {
-			activityType: string;
-		};
 
-		const returnData: IDataObject[] = [bodyData];
+	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
+		const bodyData = this.getBodyData() as IDataObject;
 
 		return {
-			workflowData: [this.helpers.returnJsonArray(returnData)],
+			workflowData: [this.helpers.returnJsonArray([bodyData])],
 		};
 	}
 }
