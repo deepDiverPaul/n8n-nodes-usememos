@@ -1,18 +1,18 @@
 # n8n-nodes-memos
 
-This is an n8n community node. It lets you use Memos in your n8n workflows.
+This is an n8n community node. It lets you use _app/service name_ in your n8n workflows.
 
-[Memos](https://www.usememos.com/) is a privacy-first, lightweight note-taking service.
+_App/service name_ is _one or two sentences describing the service this node integrates with_.
 
-[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
+[n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/sustainable-use-license/) workflow automation platform.
 
-[Installation](#installation)  
-[Operations](#operations)  
-[Credentials](#credentials) <!-- delete if no auth needed -->  
-[Compatibility](#compatibility)  
-[Usage](#usage) <!-- delete if not using this section -->  
-[Resources](#resources)  
-[Version history](#version-history) <!-- delete if not using this section -->
+[Installation](#installation)
+[Operations](#operations)
+[Credentials](#credentials)
+[Compatibility](#compatibility)
+[Usage](#usage)
+[Resources](#resources)
+[Version history](#version-history)
 
 ## Installation
 
@@ -20,33 +20,27 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 
 ## Operations
 
-- listUsers
-- getUser
-- listMemos
-- getMemo
+_List the operations supported by your node._
 
 ## Credentials
 
-Register a Memos account and create a personal access token.
-
-[Reference](https://www.usememos.com/docs/security/access-tokens)
+_If users need to authenticate with the app/service, provide details here. You should include prerequisites (such as signing up with the service), available authentication methods, and how to set them up._
 
 ## Compatibility
 
-Any version
+_State the minimum n8n version, as well as which versions you test against. You can also include any known version incompatibility issues._
 
 ## Usage
 
-1. Create a new workflow.
-2. Add a new node.
-3. Select the Memos node.
-4. Configure the node with your Memos account information.
-5. Add the Memos operations you want to use in your workflow.
-6. Connect the Memos operations to the other nodes in your workflow.
-7. Run your workflow.
+_This is an optional section. Use it to help users with any difficult or confusing aspects of the node._
+
+_By the time users are looking for community nodes, they probably already know n8n basics. But if you expect new users, you can link to the [Try it out](https://docs.n8n.io/try-it-out/) documentation to help them get started._
 
 ## Resources
 
-- [n8n community nodes documentation](https://docs.n8n.io/integrations/community-nodes/)
-- [Memos documentation](https://www.usememos.com/docs/)
-- [Memos API documentation](https://memos.apidocumentation.com/reference)
+* [n8n community nodes documentation](https://docs.n8n.io/integrations/#community-nodes)
+* _Link to app/service documentation._
+
+## Version history
+
+_This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
