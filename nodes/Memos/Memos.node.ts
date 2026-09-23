@@ -2,7 +2,9 @@
 import {
 	IDataObject,
 	IExecuteFunctions,
+	ILoadOptionsFunctions,
 	INodeExecutionData,
+	INodePropertyOptions,
 	INodeType,
 	INodeTypeDescription,
 	JsonObject,
@@ -166,6 +168,17 @@ export class Memos implements INodeType {
 						type: 'boolean',
 						default: false,
 						description: 'Whether the memo is pinned',
+					},
+					{
+						displayName: 'Space Name or ID',
+						name: 'space',
+						type: 'options',
+						typeOptions: {
+							loadOptionsMethod: 'getSpaces',
+						},
+						default: '',
+						description:
+							'The space in which this memo is placed. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 					},
 					{
 						displayName: 'State',
@@ -350,6 +363,17 @@ export class Memos implements INodeType {
 						description: 'Whether the memo is pinned',
 					},
 					{
+						displayName: 'Space Name or ID',
+						name: 'space',
+						type: 'options',
+						typeOptions: {
+							loadOptionsMethod: 'getSpaces',
+						},
+						default: '',
+						description:
+							'The space in which this memo is placed. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+					},
+					{
 						displayName: 'State',
 						name: 'state',
 						type: 'options',
@@ -438,6 +462,19 @@ export class Memos implements INodeType {
 		],
 	};
 
+	methods = {
+		loadOptions: {
+			async getSpaces(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const spaces = await apiRequestAllItems.call(this, 'spaces', 'GET', 'spaces');
+				return [{name: 'No Space', value: ''},...(spaces as Array<{ name: string; title?: string; description?: string }>).map((space) => ({
+					name: space.title || space.name,
+					value: space.name,
+					description: space.description,
+				}))];
+			},
+		},
+	};
+
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
@@ -456,6 +493,10 @@ export class Memos implements INodeType {
 							content,
 							...additionalFields,
 						};
+
+						if (body.space && typeof body.space === 'string' && !body.space.includes('/')) {
+							body.space = `spaces/${body.space}`;
+						}
 
 						const responseData = await apiRequest.call(this, 'POST', 'memos', body);
 						returnData.push({
@@ -526,6 +567,15 @@ export class Memos implements INodeType {
 						}
 
 						const updateFields = this.getNodeParameter('updateFields', i) as IDataObject;
+
+						if (
+							updateFields.space &&
+							typeof updateFields.space === 'string' &&
+							!updateFields.space.includes('/')
+						) {
+							updateFields.space = `spaces/${updateFields.space}`;
+						}
+
 						const fieldKeys = Object.keys(updateFields);
 
 						if (fieldKeys.length === 0) {

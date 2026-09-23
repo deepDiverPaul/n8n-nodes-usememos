@@ -46,6 +46,7 @@ Interact with resources in your Memos instance. Also supports AI Tool calling (`
 #### Memo Resource
 - **Create**: Create a new memo in Markdown format.
   - **Content**: Markdown body of the memo.
+  - **Space**: Select the space where the memo is placed.
   - **Visibility**: Set visibility (`PRIVATE`, `PROTECTED`, or `PUBLIC`).
   - **State**: Set state (`NORMAL` or `ARCHIVED`).
   - **Pinned**: Choose whether the memo is pinned.
@@ -56,7 +57,7 @@ Interact with resources in your Memos instance. Also supports AI Tool calling (`
   - **Filter**: CEL (Common Expression Language) filter expression (e.g., `creator == "users/1"`).
   - **Order By**: Sort order (e.g., `display_time desc`, `create_time desc`).
 - **Update**: Modify an existing memo by ID or name using update masks.
-  - Update **Content**, **Visibility**, **State**, or **Pinned** status.
+  - Update **Content**, **Space**, **Visibility**, **State**, or **Pinned** status.
 - **Delete**: Delete an existing memo by ID or name.
 
 #### User Resource

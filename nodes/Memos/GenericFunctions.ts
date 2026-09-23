@@ -4,6 +4,7 @@ import {
 	IHookFunctions,
 	IHttpRequestMethods,
 	IHttpRequestOptions,
+	ILoadOptionsFunctions,
 	IDataObject,
 	JsonObject,
 	NodeApiError,
@@ -16,7 +17,7 @@ type MemosCredentials = {
 };
 
 export async function apiRequest(
-	this: IAllExecuteFunctions | IExecuteFunctions | IHookFunctions,
+	this: IAllExecuteFunctions | IExecuteFunctions | IHookFunctions | ILoadOptionsFunctions,
 	method: IHttpRequestMethods,
 	endpoint: string,
 	body?: IHttpRequestOptions['body'],
@@ -56,7 +57,7 @@ export async function apiRequest(
 }
 
 export async function apiRequestAllItems(
-	this: IExecuteFunctions,
+	this: IExecuteFunctions | ILoadOptionsFunctions | IAllExecuteFunctions | IHookFunctions,
 	propertyName: string,
 	method: IHttpRequestMethods,
 	endpoint: string,
