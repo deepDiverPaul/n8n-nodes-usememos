@@ -22,11 +22,17 @@ Connecting to a Memos instance requires Bearer Token authentication via the `mem
 A general action node to interact with resources in Memos.
 
 #### Supported Resources & Operations:
+- **Attachment (`attachment`)**:
+  - `Create`: Create/upload an attachment from binary workflow data or base64/external link, with optional memo linking.
+  - `Get`: Retrieve attachment details by ID/name (e.g. `123` or `attachments/123`).
+  - `Get Many`: List attachments with pagination (`returnAll` / `limit`), CEL filter expressions, and custom ordering (`orderBy`).
+  - `Update`: Update attachment filename, MIME type, content, external link, or linked memo.
+  - `Delete`: Delete an existing attachment by ID/name.
 - **Memo (`memo`)**:
-  - `Create`: Create a new memo in Markdown format with optional space, visibility (`PRIVATE`, `PROTECTED`, `PUBLIC`), state (`NORMAL`, `ARCHIVED`), and pinned flag.
+  - `Create`: Create a new memo in Markdown format with optional space, visibility (`PRIVATE`, `PROTECTED`, `PUBLIC`), state (`NORMAL`, `ARCHIVED`), pinned flag, and linked attachments.
   - `Get`: Retrieve a specific memo by ID/name (e.g. `123` or `memos/123`).
   - `Get Many`: List memos with pagination (`returnAll` / `limit`), state filtering, CEL filter expressions (e.g. `creator == "users/1"`), and custom ordering (`orderBy`).
-  - `Update`: Update content, space, visibility, state, and pinned status of an existing memo using `updateMask`.
+  - `Update`: Update content, space, visibility, state, pinned status, and linked attachments of an existing memo using `updateMask`.
   - `Delete`: Delete an existing memo by ID/name.
 - **User (`user`)**:
   - `Get`: Retrieve user details by user ID or username.

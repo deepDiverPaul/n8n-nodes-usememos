@@ -1,6 +1,7 @@
 import { AllEntities, IDataObject, PropertiesOf } from 'n8n-workflow';
 
 export type MemosMap = {
+	attachment: 'create' | 'delete' | 'get' | 'getAll' | 'update';
 	memo: 'create' | 'delete' | 'get' | 'getAll' | 'update';
 	user: 'get' | 'getAll' | 'getMe';
 };
@@ -27,6 +28,23 @@ export interface SpaceModel {
 
 export interface ListSpacesResponse {
 	spaces?: SpaceModel[];
+	nextPageToken?: string;
+}
+
+export interface AttachmentModel {
+	name: string;
+	uid?: string;
+	createTime?: string;
+	filename?: string;
+	content?: string;
+	externalLink?: string;
+	type?: string;
+	size?: string;
+	memo?: string;
+}
+
+export interface ListAttachmentsResponse {
+	attachments?: AttachmentModel[];
 	nextPageToken?: string;
 }
 

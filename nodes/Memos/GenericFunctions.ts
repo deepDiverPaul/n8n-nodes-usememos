@@ -100,3 +100,62 @@ export function getUserResourceName(user: UserModel): string {
 	}
 	throw new Error('Could not determine user identifier from current user response');
 }
+
+export function formatAttachmentReferences(input: unknown): Array<{ name: string }> {
+	if (!input) {
+		return [];
+	}
+
+	if (typeof input === 'string') {
+		const trimmed = input.trim();
+		if (!trimmed) {
+			return [];
+		}
+
+		if (trimmed.startsWith('[')) {
+			try {
+				const parsed = JSON.parse(trimmed) as unknown;
+				return formatAttachmentReferences(parsed);
+			} catch {
+				// Fall through to comma-separated handling
+			}
+		}
+
+		return trimmed
+			.split(',')
+			.map((item) => item.trim())
+			.filter((item) => item.length > 0)
+			.map((item) => ({
+				name: item.includes('/') ? item : `attachments/${item}`,
+			}));
+	}
+
+	if (Array.isArray(input)) {
+		return input
+			.map((item) => {
+				if (typeof item === 'string') {
+					const trimmed = item.trim();
+					return trimmed.length > 0
+						? { name: trimmed.includes('/') ? trimmed : `attachments/${trimmed}` }
+						: null;
+				}
+				if (item && typeof item === 'object') {
+					const obj = item as IDataObject;
+					if (typeof obj.name === 'string') {
+						const name = obj.name.trim();
+						return {
+							...obj,
+							name: name.includes('/') ? name : `attachments/${name}`,
+						};
+					}
+					if (obj.id !== undefined) {
+						return { name: `attachments/${obj.id}` };
+					}
+				}
+				return null;
+			})
+			.filter((item): item is { name: string } => item !== null);
+	}
+
+	return [];
+}

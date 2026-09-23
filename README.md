@@ -50,6 +50,7 @@ Interact with resources in your Memos instance. Also supports AI Tool calling (`
   - **Visibility**: Set visibility (`PRIVATE`, `PROTECTED`, or `PUBLIC`).
   - **State**: Set state (`NORMAL` or `ARCHIVED`).
   - **Pinned**: Choose whether the memo is pinned.
+  - **Attachments**: Link one or more attachments by ID or name (e.g. `123, 456` or `attachments/123`).
 - **Get**: Retrieve a specific memo by ID or resource name (e.g., `123` or `memos/123`).
 - **Get Many**: List multiple memos with flexible querying.
   - **Return All** or specify a **Limit**.
@@ -57,8 +58,21 @@ Interact with resources in your Memos instance. Also supports AI Tool calling (`
   - **Filter**: CEL (Common Expression Language) filter expression (e.g., `creator == "users/1"`).
   - **Order By**: Sort order (e.g., `display_time desc`, `create_time desc`).
 - **Update**: Modify an existing memo by ID or name using update masks.
-  - Update **Content**, **Space**, **Visibility**, **State**, or **Pinned** status.
+  - Update **Content**, **Space**, **Visibility**, **State**, **Pinned** status, or **Attachments**.
 - **Delete**: Delete an existing memo by ID or name.
+
+#### Attachment Resource
+- **Create**: Create/upload a new attachment.
+  - **Binary File**: Upload directly from workflow binary data (e.g. `data`) or specify custom filename/MIME type.
+  - **Manual/Custom**: Provide filename, base64 content, MIME type, or external URL.
+  - **Memo ID**: Optionally link the attachment to a memo on creation.
+- **Get**: Retrieve attachment metadata by ID or name (e.g. `123` or `attachments/123`).
+- **Get Many**: List attachments with pagination and filtering.
+  - **Return All** or specify a **Limit**.
+  - **Filter**: CEL expression filter (e.g. `mime_type == "image/png"`).
+  - **Order By**: Sort order (e.g. `create_time desc`, `filename asc`).
+- **Update**: Update attachment properties (filename, MIME type, content, external link, or linked memo).
+- **Delete**: Delete an existing attachment by ID or name.
 
 #### User Resource
 - **Get**: Retrieve user profile and details by user ID or username.
