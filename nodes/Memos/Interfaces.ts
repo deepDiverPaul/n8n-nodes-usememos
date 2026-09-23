@@ -11,7 +11,24 @@ export type MemosProperties = PropertiesOf<MemosAction>;
 export type RowStatus = 'ACTIVE' | 'ARCHIVED' | 'ROW_STATUS_UNSPECIFIED';
 export type MemoState = 'STATE_UNSPECIFIED' | 'NORMAL' | 'ARCHIVED';
 export type UserRole = 'ROLE_UNSPECIFIED' | 'HOST' | 'ADMIN' | 'USER';
-export type Visibility = 'VISIBILITY_UNSPECIFIED' | 'PRIVATE' | 'PROTECTED' | 'PUBLIC';
+export type Visibility = 'VISIBILITY_UNSPECIFIED' | 'PRIVATE' | 'PROTECTED' | 'PUBLIC' | 'SPACE';
+
+export interface SpaceModel {
+	name: string;
+	title?: string;
+	description?: string;
+	currentUserRole?: string;
+	memberCount?: number;
+	icon?: {
+		emoji?: string;
+		lucide?: string;
+	};
+}
+
+export interface ListSpacesResponse {
+	spaces?: SpaceModel[];
+	nextPageToken?: string;
+}
 
 export interface ResourceModel {
 	name: string;
@@ -58,6 +75,7 @@ export interface Memo {
 	visibility?: Visibility;
 	tags?: string[];
 	pinned?: boolean;
+	space?: string;
 	resources?: ResourceModel[];
 	attachments?: IDataObject[];
 	relations?: IDataObject[];
