@@ -25,8 +25,8 @@ export async function apiRequest(
 ): Promise<IDataObject> {
 	const credentials = (await this.getCredentials('memosApi')) as MemosCredentials;
 	let serverUrl = (credentials.server || '').trim().replace(/\/+$/, '');
-	if (!serverUrl.endsWith('/api/v1')) {
-		serverUrl = `${serverUrl}/api/v1`;
+	if (!serverUrl.endsWith('/api')) {
+		serverUrl = `${serverUrl}/api`;
 	}
 
 	if (!endpoint.startsWith('/')) {

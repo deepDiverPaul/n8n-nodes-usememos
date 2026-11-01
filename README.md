@@ -83,7 +83,7 @@ Interact with resources in your Memos instance. Also supports AI Tool calling (`
 
 ### 2. Memos Trigger Node (`Memos Trigger`)
 
-A webhook trigger node that automatically subscribes to and receives event notifications from a Memos instance via user webhook callbacks (`/api/v1/users/{user}/webhooks`).
+A webhook trigger node that automatically subscribes to and receives event notifications from a Memos instance via user webhook callbacks (`/api/users/{user}/webhooks`).
 
 - Automatically creates and manages webhooks when workflow is activated.
 - Captures real-time event payloads sent from Memos to trigger workflows instantly.
@@ -108,14 +108,28 @@ To use these nodes, you need to configure the **Memos API** (`memosApi`) credent
 2. Configure the following fields:
    - **Server URL**: The base URL of your Memos instance (e.g., `https://memos.example.com`).
    - **Access Token**: The personal access token generated in Memos.
-3. Save the credential. n8n will test authentication via `GET /api/v1/auth/me`.
+3. Save the credential. n8n will test authentication via `GET /api/auth/me`.
 
 ---
 
 ## Compatibility
 
 - **n8n**: Tested with n8n version `1.0.0` and above.
-- **useMemos API**: Compatible with useMemos REST API v1.
+- **useMemos**: Requires **memos 26.10** or later.
+
+---
+
+## ⚠️ Breaking Change: Memos 26.10 Required
+
+Starting with this version, the node requires **memos 26.10** or later.
+
+In memos 26.10, the API base URL changed from `/api/v1` to `/api`. The old `/api/v1` endpoints are deprecated and return `410 Gone`, so this node no longer works with earlier versions of memos.
+
+**If you are upgrading from a previous version of this node:**
+1. Ensure your memos instance is running version **26.10** or later.
+2. No credential changes are needed—the node will automatically use the new `/api` endpoint.
+
+For details, see the [memos 26.10.0 release notes](https://github.com/usememos/memos/releases/tag/26.10.0).
 
 ---
 
